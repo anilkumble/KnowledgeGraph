@@ -4,6 +4,8 @@ import com.example.neo4j.pojo.Relationship;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.OutputStream;
@@ -16,8 +18,10 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class ReplicateService
 {
-    private static final String REPLICATE_API_URL = "https://api.replicate.com/v1/predictions";
-    private static final String REPLICATE_API_TOKEN = "r8_2kZ3D1HRexCQL2rLHOvqiw51RQAe7zC4GWeBD";
+    private static final String REPLICATE_API_URL   =   "https://api.replicate.com/v1/predictions";
+
+    @Value("${token.replicateservice}")
+    private String replicateToken;
 
     public List<Relationship> extractRelationships(String text)
     {
@@ -26,7 +30,7 @@ public class ReplicateService
             URL url                         =   new URL(REPLICATE_API_URL);
             HttpURLConnection connection    =   (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
-            connection.setRequestProperty("Authorization", "Token " + REPLICATE_API_TOKEN);
+            connection.setRequestProperty("Authorization", "Token " + replicateToken);
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setDoOutput(true);
 
@@ -61,7 +65,7 @@ public class ReplicateService
             URL url                         =   new URL(statusUrl);
             HttpURLConnection connection    =   (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            connection.setRequestProperty("Authorization", "Token " + REPLICATE_API_TOKEN);
+            connection.setRequestProperty("Authorization", "Token " + replicateToken);
 
             JsonNode response   =   mapper.readTree(connection.getInputStream());
             String status       =   response.get("status").asText();

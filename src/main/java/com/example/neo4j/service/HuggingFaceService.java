@@ -5,6 +5,7 @@ import com.example.neo4j.pojo.Relationship;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.OutputStream;
@@ -17,14 +18,16 @@ import java.util.List;
 public class HuggingFaceService {
 
     private static final String HUGGING_FACE_URL    =   "https://api-inference.huggingface.co/models/";
-    private static final String HUGGING_FACE_TOKEN  =   "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";
+
+    @Value("${token.huggingfaceservice}")
+    private String huggingFaceToken;
 
     public List<Entity> extractEntities(String text) throws Exception
     {
         URL url                         =   new URL(HUGGING_FACE_URL + "dbmdz/bert-large-cased-finetuned-conll03-english");
         HttpURLConnection connection    =   (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
-        connection.setRequestProperty("Authorization", "Bearer " + HUGGING_FACE_TOKEN);
+        connection.setRequestProperty("Authorization", "Bearer " + huggingFaceToken);
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setDoOutput(true);
 
@@ -49,7 +52,7 @@ public class HuggingFaceService {
             URL url                         =   new URL(HUGGING_FACE_URL + "Babelscape/rebel-large");
             HttpURLConnection connection    =   (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
-            connection.setRequestProperty("Authorization", "Bearer " + HUGGING_FACE_TOKEN);
+            connection.setRequestProperty("Authorization", "Bearer " + huggingFaceToken);
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setDoOutput(true);
 
